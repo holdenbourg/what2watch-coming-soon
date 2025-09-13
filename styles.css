@@ -153,6 +153,14 @@ body {
   display: none !important; 
 }
 
+.i18n-fade {
+  opacity: 1;
+  transition: opacity 0.6s ease-in-out;
+}
+.i18n-fade.fade-out {
+  opacity: 0;
+}
+
 @media (max-width: 1024px) {
   .wrapper { width: min(92vw, 520px); height: auto; min-height: 420px; }
 }

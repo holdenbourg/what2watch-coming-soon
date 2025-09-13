@@ -25,40 +25,48 @@ const translations: Translation[] = [
 
 (function setupLanguageRotation() {
   const emailInput   = document.getElementById('email') as HTMLInputElement | null;
-  const emailLabel   = document.getElementById('i18n-email-label');
-  const submitButton = document.getElementById('i18n-submit');
-  const langChip     = document.getElementById('i18n-lang');
-  const headingEl    = document.getElementById('i18n-heading');
+  const emailLabel   = document.getElementById('i18n-email-label')!;
+  const submitButton = document.getElementById('i18n-submit')!;
+  const langChip     = document.getElementById('i18n-lang')!;
+  const headingEl    = document.getElementById('i18n-heading')!;
   const htmlEl       = document.documentElement;
-
-  if (!emailLabel || !submitButton || !headingEl) return;
 
   let idx = 0;
   let timer: number | null = null;
 
-  const apply = (t: Translation) => {
+  const elements = [headingEl, emailLabel, submitButton, langChip];
+
+  const applyTexts = (t: Translation) => {
     htmlEl.setAttribute('lang', t.code);
     htmlEl.setAttribute('dir', t.dir ?? 'ltr');
-
     headingEl.textContent   = t.heading;
     emailLabel.textContent  = t.email;
     submitButton.textContent = t.notify;
-    if (langChip) langChip.textContent = t.lang;
+    langChip.textContent    = t.lang;
+  };
+
+  const crossFade = (t: Translation) => {
+    elements.forEach(el => el.classList.add('fade-out'));
+    
+    setTimeout(() => {
+      applyTexts(t);
+      elements.forEach(el => el.classList.remove('fade-out'));
+    }, 600);
   };
 
   const next = () => {
     idx = (idx + 1) % translations.length;
-    apply(translations[idx]);
+    crossFade(translations[idx]);
   };
 
   const start = () => { if (timer == null) timer = window.setInterval(next, 3000); };
   const stop  = () => { if (timer != null) { window.clearInterval(timer); timer = null; } };
 
-  ///  Start in englush and cycles from there  \\\
-  apply(translations[0]);
+  ///  Start with English and cycle from there  \\\
+  applyTexts(translations[0]);
   start();
 
-  ///  Pause while the user interacts or is typing  \\\
+  ///  Pause while user interacts  \\\
   const shouldPause = () => !!emailInput?.matches(':focus') || !!emailInput?.value.trim();
 
   emailInput?.addEventListener('focus', stop, { passive: true });
