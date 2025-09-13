@@ -5,8 +5,16 @@
   --panel-blur: 3px;
 }
 
-* { margin: 0; padding: 0; box-sizing: border-box; }
-html, body { height: 100%; }
+* { 
+  margin: 0; 
+  padding: 0; 
+  box-sizing: border-box; 
+}
+
+html, body { 
+  height: 100%; 
+}
+
 body {
   font-family: "Poppins", sans-serif;
   min-height: 100dvh;
@@ -16,7 +24,6 @@ body {
   color: var(--white);
 }
 
-/* Panel (same proportions/feel as login/register) */
 .wrapper {
   position: relative;
   width: 20.8%;
@@ -34,7 +41,9 @@ body {
   padding: 2.05vw;
 }
 
-.form-box { width: 100%; }
+.form-box { 
+  width: 100%; 
+}
 .form-box h2 {
   font-size: clamp(22px, 1.7vw, 28px);
   color: var(--white);
@@ -42,7 +51,6 @@ body {
   margin-bottom: 8px;
 }
 
-/* Floating label input (mirrors your component) */
 .input-box {
   position: relative;
   width: 100%;
@@ -73,14 +81,13 @@ body {
   transition: 0.3s ease;
   opacity: 1;
 }
-/* Rise when focused or has content (placeholder=" " trick) */
+/* Rise when focused or has content */
 .input-box input:focus ~ label,
 .input-box input:not(:placeholder-shown) ~ label {
   top: -6px;
   opacity: 0.95;
 }
 
-/* Button (same vibe) */
 .button {
   width: 100%;
   height: clamp(36px, 2.4vw, 56px);
@@ -95,10 +102,22 @@ body {
   transition: transform 0.2s ease, font-size 0.2s ease, opacity 0.2s ease;
   font-size: clamp(14px, 0.85vw, 18px);
 }
-.button:hover { transform: scale(1.015); }
-.button:disabled { opacity: 0.6; cursor: not-allowed; }
+.button:hover { 
+  transform: scale(1.015); 
+}
+.button:disabled { 
+  opacity: 0.6; 
+  cursor: not-allowed; 
+}
 
-/* Banner (reused from app style) */
+.lang-chip {
+  margin-top: 10px;
+  text-align: right;
+  opacity: 0.85;
+  font-size: 12px;
+  color: #fff;
+}
+
 .warning-banner {
   overflow: hidden;
   max-height: 0;
@@ -109,9 +128,16 @@ body {
   font-weight: 600;
   margin-top: 6px;
 }
-.warning-banner.show { max-height: 60px; opacity: 1; }
-.warning-banner.success { color: #6bff81; }
-.warning-banner.error   { color: #ff6b6b; }
+.warning-banner.show { 
+  max-height: 60px; 
+  opacity: 1; 
+}
+.warning-banner.success { 
+  color: #6bff81;
+}
+.warning-banner.error { 
+  color: #ff6b6b; 
+}
 
 .small-print {
   text-align: center;
@@ -120,10 +146,10 @@ body {
   margin-top: 12px;
 }
 
-/* Utility */
-.hidden { display: none !important; }
+.hidden { 
+  display: none !important; 
+}
 
-/* Responsive tweaks */
 @media (max-width: 1024px) {
   .wrapper { width: min(92vw, 520px); height: auto; min-height: 420px; }
 }
