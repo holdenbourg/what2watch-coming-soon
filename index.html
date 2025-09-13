@@ -3,17 +3,43 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-
     <title>What2Watch — Coming Soon</title>
 
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+      rel="preload"
+      as="style"
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap"
+      onload="this.onload=null;this.rel='stylesheet'">
+    <noscript>
+      <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap">
+    </noscript>
+
     <link rel="stylesheet" href="styles.css" />
+
+    <script>
+      document.documentElement.dataset.fonts = 'loading';
+      if (document.fonts && document.fonts.ready) {
+        document.fonts.ready.then(() => {
+          document.documentElement.dataset.fonts = 'ready';
+        });
+      } else {
+        setTimeout(() => { document.documentElement.dataset.fonts = 'ready'; }, 800);
+      }
+    </script>
   </head>
 
   <body>
     <main class="wrapper">
       <div class="form-box">
-        <h2 id="i18n-heading" class="form-title i18n-fade i18n-layer">Be the first to know</h2>
+
+        <!-- Fixed floor box (1 line). Text sits on the bottom of this box. -->
+        <div class="title-floor">
+          <h2 id="i18n-heading" class="form-title i18n-target">Be the first to know</h2>
+        </div>
 
         <div id="banner" class="warning-banner" role="status" aria-live="polite"></div>
 
@@ -28,20 +54,21 @@
               placeholder=" "
               aria-label="Email"
             />
-
-            <label id="i18n-email-label" class="i18n-fade i18n-layer">Email</label>
+            <label id="i18n-email-label" class="i18n-target">Email</label>
           </div>
 
-          <button type="submit" class="button i18n-fade i18n-layer" id="i18n-submit">Notify me</button>
+          <button type="submit" class="button i18n-target" id="i18n-submit">
+            Notify me
+          </button>
 
           <div class="lang-chip" aria-hidden="true">
-            <span id="i18n-lang" class="i18n-fade i18n-layer">English</span>
+            <span id="i18n-lang" class="i18n-target">English</span>
           </div>
         </form>
       </div>
     </main>
 
-    <!-- Built by esbuild from src/main.ts -->
+    <!-- esbuild should compile src/main.ts -> assets/main.js -->
     <script type="module" src="assets/main.js"></script>
   </body>
 </html>

@@ -1,19 +1,16 @@
-/* Match app’s look */
 :root {
   --white: #fff;
   --border: rgba(255,255,255,0.5);
   --panel-blur: 3px;
 }
 
-* { 
-  margin: 0; 
-  padding: 0; 
-  box-sizing: border-box; 
-}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { height: 100%; }
 
-html, body { 
-  height: 100%; 
-}
+html[data-fonts="loading"] #i18n-heading,
+html[data-fonts="loading"] #i18n-email-label,
+html[data-fonts="loading"] #i18n-submit,
+html[data-fonts="loading"] #i18n-lang { visibility: hidden; }
 
 body {
   font-family: "Poppins", sans-serif;
@@ -28,8 +25,11 @@ body {
   position: relative;
   width: 20.8%;
   min-width: 320px;
-  height: 48%;
-  min-height: 420px;
+
+  /* shorter overall height so less space above title */
+  height: 44%;                /* was 48% */
+  min-height: 400px;          /* was 420px */
+
   background: transparent;
   border: 0.15vw solid var(--border);
   border-radius: 20px;
@@ -38,27 +38,86 @@ body {
   display: grid;
   place-items: center;
   overflow: hidden;
-  padding: 2.05vw;
+
+  /* reduce padding so title sits higher */
+  padding: 1.6vw;             /* was 2.05vw */
 }
 
-.form-box { 
-  width: 100%; 
-}
-.form-title {
+.form-box { width: 100%; }
+
+/* ---------- Banner with more top room & input-matching font ---------- */
+.warning-banner {
   min-height: clamp(28px, 2.2vw, 40px);
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
+
+  /* match input font-size */
+  font-size: clamp(14px, 0.85vw, 18px);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+
+  /* more room above so not pressed against title */
+  margin: 24px 0 10px; /* was 18px 0 10px */
+
+  opacity: 0;
+  transition: opacity .4s ease;
+
+  /* default color fallback */
+  color: #6bff81;
 }
 
-.input-box { 
-  position: relative; 
-  width: 100%; 
-  height: 2.5vw; 
-  min-height: 38px; 
-  border-bottom: 0.15vw solid #fff; 
-  margin: 1.5vw 0; 
+/* keep the color fixed through fade-out by applying it in both states */
+.warning-banner.error {
+  color: #ff6b6b;
+}
+.warning-banner.success {
+  color: #6bff81;
+}
+
+/* don’t change color when hiding, only opacity */
+.warning-banner.show {
+  opacity: 1;
+}
+
+/* ---------- TITLE WITH TRUE FLOOR ---------- */
+.title-floor {
+  --h2-lh: 1.2;
+  position: relative;
+  height: calc(var(--h2-lh) * 1em); /* one-line floor */
+  margin-bottom: clamp(10px, 1.2vw, 18px);
+}
+
+.form-title {
+  font-size: clamp(18px, 1.6vw, 28px);
+  line-height: var(--h2-lh);
+  margin: 0;
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  text-align: center;
+}
+
+.form-title .i18n-wrap  { position: relative; display: block; }
+.form-title .i18n-layer {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity .6s ease-in-out; /* no vertical animation */
+  text-align: center;
+  will-change: opacity;
+}
+.form-title .i18n-layer.is-current { opacity: 1; }
+
+/* ---------- Input + floating label ---------- */
+.input-box {
+  position: relative;
+  width: 100%;
+  height: 2.5vw;
+  min-height: 38px;
+  border-bottom: 0.15vw solid #fff;
+  margin: 1.0vw 0;
 }
 .input-box input {
   width: 100%;
@@ -69,25 +128,47 @@ body {
   color: var(--white);
   font-weight: 600;
   font-size: clamp(14px, 0.85vw, 18px);
-  padding: 0 6px 0 5px;
+  padding-inline: 5px 6px;
+  text-align: start;
 }
+
+/* Label fade up a hair higher */
 .input-box label {
   position: absolute;
   top: 50%;
-  left: 5px;
+  inset-inline: 5px;
   transform: translateY(-50%);
-  font-size: 0.85vw;
-  color: #fff;
-  font-weight: 500;
+  height: 1em;
+  line-height: 1;
+  white-space: nowrap;
   pointer-events: none;
-  transition: 0.3s;
+
+  opacity: 0.9;
+  transition:
+    top .28s ease,
+    transform .28s ease,
+    opacity .28s ease;
 }
-/* Rise when focused or has content */
 .input-box input:focus ~ label,
 .input-box input:not(:placeholder-shown) ~ label {
-  top: -5px;
+  top: -12px;   /* slightly higher */
+  transform: none;
+  opacity: 0.82;
 }
 
+/* Optional i18n layers inside label */
+.input-box label .i18n-wrap { position: relative; display: block; width: 100%; height: 100%; }
+.input-box label .i18n-layer {
+  position: absolute; inset: 0; display: block; opacity: 0; transition: opacity .6s ease-in-out;
+  text-align: start; direction: inherit; white-space: nowrap;
+}
+.input-box label .i18n-layer.is-current { opacity: 1; }
+
+/* RTL input alignment */
+[dir="rtl"] .input-box input { direction: rtl; text-align: right; padding-right: 6px; padding-left: 5px; }
+[dir="rtl"] .input-box label { left: auto; right: 5px; text-align: right; transform: translateY(-50%); }
+
+/* ---------- Button centered ---------- */
 .button {
   width: 100%;
   height: clamp(36px, 2.4vw, 56px);
@@ -101,71 +182,26 @@ body {
   box-shadow: 0 0 30px rgba(0,0,0,0.5);
   transition: transform 0.2s ease, font-size 0.2s ease, opacity 0.2s ease;
   font-size: clamp(14px, 0.85vw, 18px);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.button:hover { 
-  transform: scale(1.015); 
-}
-.button:disabled { 
-  opacity: 0.6; 
-  cursor: not-allowed; 
-}
-
-.lang-chip { 
-  margin-top: 10px; 
-  text-align: right; 
-  opacity: 0.85; 
-  font-size: 12px; 
-  color: #fff; 
-}
-
-.form-message {
-  min-height: 20px;
-  margin-top: 6px;
-  font-weight: 600;
-  font-size: 0.85rem;
-  line-height: 1.25;
-  opacity: 0;
-  transition: opacity .25s ease;
-}
-.form-message.show { 
-  opacity: 1; 
-}
-.form-message.error { 
-  color: #ff6b6b; 
-}
-.form-message.success { 
-  color: #6bff81; 
-}
-
-.small-print {
-  text-align: center;
-  font-size: clamp(11px, 0.75vw, 14px);
-  opacity: 0.9;
-  margin-top: 12px;
-}
-
-.hidden { 
-  display: none !important; 
-}
-
-.i18n-fade { 
-  transition: opacity 0.6s ease-in-out; 
-}
-.i18n-layer {
   position: relative;
+  overflow: hidden;
+  text-align: center;
+  margin-top: clamp(8px, 0.8vw, 12px);
 }
-.i18n-clone {
-  position: absolute;
-  left: 0; top: 0;
-  width: 100%; height: 100%;
-  opacity: 0;
-  transition: opacity 0.6s ease-in-out;
-  pointer-events: none;
-}
+.button:hover { transform: scale(1.015); }
+.button:disabled { opacity: .6; cursor: not-allowed; }
+
+.button .i18n-wrap { position: absolute; inset: 0; display: grid; place-items: center; }
+.button .i18n-layer { position: absolute; inset: 0; display: grid; place-items: center; opacity: 0; transition: opacity .6s ease-in-out; text-align: center; }
+.button .i18n-layer.is-current { opacity: 1; }
+
+/* ---------- Lang chip right ---------- */
+.lang-chip { margin-top: 10px; opacity: .85; font-size: 12px; color: #fff; position: relative; text-align: right; }
+.lang-chip #i18n-lang .i18n-wrap { position: absolute; inset: 0; text-align: right; }
+.lang-chip #i18n-lang .i18n-layer { position: absolute; inset: 0; text-align: right; opacity: 0; transition: opacity .6s ease-in-out; }
+.lang-chip #i18n-lang .i18n-layer.is-current { opacity: 1; }
+
+.small-print { text-align: center; font-size: clamp(11px, .75vw, 14px); opacity: .9; margin-top: 12px; }
 
 @media (max-width: 1024px) {
-  .wrapper { width: min(92vw, 520px); height: auto; min-height: 420px; }
+  .wrapper { width: min(92vw, 520px); height: auto; min-height: 400px; }
 }
