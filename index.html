@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>What2Watch — Coming Soon</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="wrapper">
+    <div class="form-box">
+      <h2>Be first to know</h2>
+      <div id="banner" class="warning-banner" role="status" aria-live="polite"></div>
+
+      <form id="notify-form"
+            name="notify"
+            method="POST"
+            data-netlify="true"
+            netlify-honeypot="bot-field"
+            action="/success.html">
+        <input type="hidden" name="form-name" value="notify" />
+        <p class="hidden">
+          <label>Don’t fill this out if you’re human: <input name="bot-field" /></label>
+        </p>
+
+        <div class="input-box">
+          <input id="email" name="email" type="email" required autocomplete="email" placeholder=" " aria-label="Email address"/>
+          <label for="email">Email</label>
+        </div>
+
+        <button type="submit" class="button">Notify me</button>
+        <p class="small-print">We’ll only email you about the launch. No spam, unsubscribe anytime.</p>
+      </form>
+    </div>
+  </main>
+
+  <!-- Built by esbuild from src/main.ts -->
+  <script type="module" src="assets/main.js"></script>
+</body>
+</html>
