@@ -13,7 +13,8 @@
   <body>
     <main class="wrapper">
       <div class="form-box">
-        <h2>Be first to know</h2>
+        <h2 id="i18n-heading" class="form-title">Be the first to know</h2>
+
         <div id="banner" class="warning-banner" role="status" aria-live="polite"></div>
 
         <form id="notify-form" action="/success.html" method="POST" novalidate>
@@ -24,14 +25,13 @@
               name="email"
               required
               autocomplete="email"
+              placeholder=" "
               aria-label="Email"
             />
             <label id="i18n-email-label">Email</label>
           </div>
 
-          <button type="submit" class="button" id="i18n-submit">
-            Notify me
-          </button>
+          <button type="submit" class="button" id="i18n-submit">Notify me</button>
 
           <div class="lang-chip" aria-hidden="true">
             <span id="i18n-lang">English</span>
