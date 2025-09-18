@@ -1,46 +1,35 @@
 import type { Handler } from '@netlify/functions';
 import crypto from 'node:crypto';
-import { getStore as _getStore } from '@netlify/blobs';
 
+// ---- Blobs v10.x: configure() + getStore(bucket) ----
+import { getStore, configure } from '@netlify/blobs';
+
+// Name anything you like
 const BUCKET = 'emails';
 
 function hashEmail(email: string) {
-  return crypto
-    .createHash('sha256')
-    .update(email.trim().toLowerCase())
-    .digest('hex');
+  return crypto.createHash('sha256').update(email.trim().toLowerCase()).digest('hex');
 }
 
-const json = (obj: unknown, statusCode = 200) => ({
-  statusCode,
+const json = (obj: unknown, status = 200) => ({
+  statusCode: status,
   headers: { 'content-type': 'application/json; charset=utf-8' },
   body: JSON.stringify(obj),
 });
 
 export const handler: Handler = async (event) => {
   try {
-    // If Blobs isn't auto-configured for your site, supply creds manually
-    const siteID =
-      process.env.NETLIFY_BLOBS_SITE_ID ||
-      process.env.NETLIFY_SITE_ID ||
-      '';
-    const token =
-      process.env.NETLIFY_BLOBS_TOKEN ||
-      process.env.NETLIFY_API_TOKEN ||
-      '';
+    // If your site isn't auto-configured for Blobs, configure it manually.
+    // These must be set in Netlify → Site settings → Build & deploy → Environment → Environment variables
+    const siteID = process.env.NETLIFY_BLOBS_SITE_ID;
+    const token  = process.env.NETLIFY_BLOBS_TOKEN;
 
-    // v10's types don't declare the second argument, but the runtime supports it.
-    // So we cast to any to pass {siteID, token} in manual mode.
-    const getStore = _getStore as unknown as (
-      name: string,
-      opts?: { siteID?: string; token?: string }
-    ) => {
-      get: (key: string) => Promise<string | null>;
-      set: (key: string, val: string) => Promise<void>;
-    };
+    if (siteID && token) {
+      // configure() is the correct way on v10.x
+      configure({ siteID, token });
+    }
 
-    const store =
-      siteID && token ? getStore(BUCKET, { siteID, token }) : getStore(BUCKET);
+    const store = getStore(BUCKET);
 
     if (event.httpMethod === 'GET') {
       const email = (event.queryStringParameters?.email ?? '').toString();
@@ -61,6 +50,7 @@ export const handler: Handler = async (event) => {
       }
       if (!email) return json({ error: 'Email required' }, 400);
 
+      // sanity regex
       const re = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
       if (!re.test(email)) return json({ error: 'Invalid email' }, 400);
 
@@ -74,10 +64,13 @@ export const handler: Handler = async (event) => {
 
     return json({ error: 'Method not allowed' }, 405);
   } catch (err: any) {
-    console.error('subscribe error:', err);
-    return json(
-      { error: 'Server error', reason: String(err?.message || err) },
-      500
-    );
+    // Helpful diagnostics while we’re wiring things up
+    return json({
+      error: 'Server error',
+      message: String(err?.message || err),
+      // Seeing these on a live call helps confirm the env vars are present
+      haveSiteID: !!process.env.NETLIFY_BLOBS_SITE_ID,
+      haveToken:  !!process.env.NETLIFY_BLOBS_TOKEN,
+    }, 500);
   }
 };
