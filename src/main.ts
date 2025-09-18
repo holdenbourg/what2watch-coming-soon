@@ -415,15 +415,25 @@ const T: Translation[] = [
     ///  1) Optional quick GET for fast feedback  \\\
     try {
       const r = await fetch(`/.netlify/functions/subscribe?email=${encodeURIComponent(value)}`);
-      if (!r.ok) throw new Error('GET failed');
+      let j: any = null;
+      try { j = await r.clone().json(); } catch {}
 
-      const j = await r.json();
-      if (j.duplicate) {
-        showBanner(t.errors.duplicate, 'error');
-        return; ///  don’t POST if already there  \\\
+      if (r.status === 200 && j && typeof j.duplicate === 'boolean') {
+        if (j.duplicate) {
+          showBanner(t.errors.duplicate, 'error');
+          return;
+        }
+      } else if (r.status === 400) {
+        ///  server said bad input (e.g. missing/invalid email)  \\\
+        showBanner(t.errors.invalid, 'error');
+        return;
+      } else {
+        ///  404/405/500 etc — function exists but returned an error  \\\
+        showBanner(t.errors.submitError, 'error');
+        return;
       }
-
     } catch {
+      ///  true network failures only (offline, DNS, blocked)  \\\
       showBanner(t.errors.networkError, 'error');
       return;
     }
@@ -436,23 +446,33 @@ const T: Translation[] = [
         body: JSON.stringify({ email: value }),
       });
 
-      ///  If your function returns { ok:boolean, duplicate?:boolean }  \\\
-      const j = await r.json();
+      let j: any = null;
 
-      if (j.duplicate) {
+      try { 
+        j = await r.clone().json(); 
+      } catch {}
+
+      if (r.status === 200 && j?.ok) {
+        successH2.textContent = t.success;
+        successBack.textContent = t.back;
+
+        banner.classList.remove('show');
+        swapState('success');
+
+        return;
+      }
+
+      if (r.status === 200 && j?.duplicate) {
         showBanner(t.errors.duplicate, 'error');
         return;
       }
 
-      if (j.ok) {
-        successH2.textContent = t.success;
-        successBack.textContent = t.back;
-        banner.classList.remove('show');
-
-        swapState('success');
-      } else {
-        showBanner(t.errors.submitError, 'error');
+      if (r.status === 400) {
+        showBanner(t.errors.invalid, 'error');
+        return;
       }
+
+      showBanner(t.errors.submitError, 'error');
 
     } catch {
       showBanner(t.errors.networkError, 'error');

@@ -1,7 +1,7 @@
 import type { Handler } from '@netlify/functions';
 import crypto from 'crypto';
 
-const BUCKET = 'emails';
+const BUCKET = process.env.BLOBS_BUCKET || 'emails';
 
 function hashEmail(email: string) {
   return crypto.createHash('sha256').update(email.trim().toLowerCase()).digest('hex');
