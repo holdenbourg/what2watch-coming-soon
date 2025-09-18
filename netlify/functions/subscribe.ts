@@ -19,38 +19,42 @@ export const handler: Handler = async (event) => {
     const store = getStore(BUCKET);
 
     if (event.httpMethod === 'GET') {
-      // Use Netlify’s built-in parsed params
       const email = (event.queryStringParameters?.email ?? '').toString();
       if (!email) return json({ error: 'Email required' }, 400);
 
       const key = hashEmail(email);
       const existing = await store.get(key);
+      
       return json({ duplicate: !!existing });
     }
 
     if (event.httpMethod === 'POST') {
       let email = '';
+
       try {
         const parsed = JSON.parse(event.body || '{}');
         email = (parsed?.email ?? '').toString();
       } catch {
         return json({ error: 'Invalid JSON' }, 400);
       }
+
       if (!email) return json({ error: 'Email required' }, 400);
 
-      // (Optional) server-side sanity regex
       const re = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
       if (!re.test(email)) return json({ error: 'Invalid email' }, 400);
 
       const key = hashEmail(email);
+
       const existing = await store.get(key);
       if (existing) return json({ duplicate: true });
 
       await store.set(key, JSON.stringify({ ts: Date.now() }));
+
       return json({ ok: true });
     }
 
     return json({ error: 'Method not allowed' }, 405);
+
   } catch (err) {
     return json({ error: 'Server error' }, 500);
   }
