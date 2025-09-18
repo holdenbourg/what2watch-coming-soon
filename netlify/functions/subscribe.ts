@@ -15,16 +15,26 @@ const json = (obj: unknown, statusCode = 200) => ({
 
 export const handler: Handler = async (event) => {
   try {
-    // if Blobs is disabled, this import or getStore() will throw
     const { getStore } = await import('@netlify/blobs');
-    const store = getStore(BUCKET);
+
+    // Try automatic site config first.
+    // If Blobs isn't enabled, fall back to manual credentials via env vars.
+    let store;
+    try {
+      store = getStore(BUCKET);
+    } catch (e) {
+      const siteID = process.env.NETLIFY_BLOBS_SITE_ID || process.env.SITE_ID;
+      const token  = process.env.NETLIFY_BLOBS_TOKEN   || process.env.NETLIFY_API_TOKEN;
+      if (!siteID || !token) throw e; // nothing to fall back to
+      store = getStore(BUCKET, { siteID, token });
+    }
 
     if (event.httpMethod === 'GET') {
       const email = (event.queryStringParameters?.email ?? '').toString();
       if (!email) return json({ error: 'Email required' }, 400);
 
       const key = hashEmail(email);
-      const existing = await store.get(key); // returns string | null
+      const existing = await store.get(key);
       return json({ duplicate: !!existing });
     }
 
@@ -51,7 +61,6 @@ export const handler: Handler = async (event) => {
 
     return json({ error: 'Method not allowed' }, 405);
   } catch (err: any) {
-    // TEMP: log + return reason so we can see what’s wrong
     console.error('subscribe error:', err);
     return json({ error: 'Server error', reason: String(err?.message || err) }, 500);
   }
