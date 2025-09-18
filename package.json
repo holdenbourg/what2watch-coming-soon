@@ -5,9 +5,11 @@
     "build": "esbuild src/main.ts --bundle --format=esm --minify --outfile=assets/main.js",
     "dev": "esbuild src/main.ts --bundle --format=esm --sourcemap --watch --outfile=assets/main.js"
   },
-  "devDependencies": {
+  "dependencies": {
     "@netlify/blobs": "^10.0.10",
-    "@netlify/functions": "^4.2.5",
+    "@netlify/functions": "^4.2.5"
+  },
+  "devDependencies": {
     "esbuild": "^0.21.5"
   }
 }
