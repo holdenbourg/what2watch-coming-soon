@@ -1,10 +1,14 @@
 import type { Handler } from '@netlify/functions';
 import crypto from 'node:crypto';
+import { getStore as _getStore } from '@netlify/blobs';
 
 const BUCKET = 'emails';
 
 function hashEmail(email: string) {
-  return crypto.createHash('sha256').update(email.trim().toLowerCase()).digest('hex');
+  return crypto
+    .createHash('sha256')
+    .update(email.trim().toLowerCase())
+    .digest('hex');
 }
 
 const json = (obj: unknown, statusCode = 200) => ({
@@ -15,26 +19,35 @@ const json = (obj: unknown, statusCode = 200) => ({
 
 export const handler: Handler = async (event) => {
   try {
-    const { getStore } = await import('@netlify/blobs');
+    // If Blobs isn't auto-configured for your site, supply creds manually
+    const siteID =
+      process.env.NETLIFY_BLOBS_SITE_ID ||
+      process.env.NETLIFY_SITE_ID ||
+      '';
+    const token =
+      process.env.NETLIFY_BLOBS_TOKEN ||
+      process.env.NETLIFY_API_TOKEN ||
+      '';
 
-    // Try automatic site config first.
-    // If Blobs isn't enabled, fall back to manual credentials via env vars.
-    let store;
-    try {
-      store = getStore(BUCKET);
-    } catch (e) {
-      const siteID = process.env.NETLIFY_BLOBS_SITE_ID || process.env.SITE_ID;
-      const token  = process.env.NETLIFY_BLOBS_TOKEN   || process.env.NETLIFY_API_TOKEN;
-      if (!siteID || !token) throw e; // nothing to fall back to
-      store = getStore(BUCKET, { siteID, token });
-    }
+    // v10's types don't declare the second argument, but the runtime supports it.
+    // So we cast to any to pass {siteID, token} in manual mode.
+    const getStore = _getStore as unknown as (
+      name: string,
+      opts?: { siteID?: string; token?: string }
+    ) => {
+      get: (key: string) => Promise<string | null>;
+      set: (key: string, val: string) => Promise<void>;
+    };
+
+    const store =
+      siteID && token ? getStore(BUCKET, { siteID, token }) : getStore(BUCKET);
 
     if (event.httpMethod === 'GET') {
       const email = (event.queryStringParameters?.email ?? '').toString();
       if (!email) return json({ error: 'Email required' }, 400);
 
       const key = hashEmail(email);
-      const existing = await store.get(key);
+      const existing = await store.get(key); // string | null
       return json({ duplicate: !!existing });
     }
 
@@ -62,6 +75,9 @@ export const handler: Handler = async (event) => {
     return json({ error: 'Method not allowed' }, 405);
   } catch (err: any) {
     console.error('subscribe error:', err);
-    return json({ error: 'Server error', reason: String(err?.message || err) }, 500);
+    return json(
+      { error: 'Server error', reason: String(err?.message || err) },
+      500
+    );
   }
 };
