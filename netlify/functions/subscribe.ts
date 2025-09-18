@@ -31,7 +31,7 @@ async function isDuplicateEmail(token: string, formId: string, email: string): P
 
 export const handler: Handler = async (event, context) => {
   try {
-    const token = process.env.NETLIFY_API_TOKEN || '';
+    const token = process.env.NETLIFY_BLOBS_TOKEN || '';
     const siteId =
       process.env.NETLIFY_SITE_ID || // auto-injected by Netlify
       process.env.NETLIFY_BLOBS_SITE_ID || // if you had set it
