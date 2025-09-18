@@ -73,7 +73,7 @@
         <div class="state state-success is-hidden" id="state-success" aria-hidden="true">
           <div class="success-box">
             <h2 id="i18n-success">Thanks! We’ll notify you.</h2>
-            
+
             <button type="button" class="button" id="i18n-back">Enter another email</button>
           </div>
         </div>
@@ -81,5 +81,10 @@
     </main>
 
     <script type="module" src="assets/main.js"></script>
+
+    <form name="subscribe" netlify netlify-honeypot="bot-field" hidden>
+      <input type="email" name="email" />
+      <input type="text" name="bot-field" />
+    </form>
   </body>
 </html>
