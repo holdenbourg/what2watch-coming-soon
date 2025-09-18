@@ -356,10 +356,21 @@ var T = [
     }
     try {
       const r = await fetch(`/.netlify/functions/subscribe?email=${encodeURIComponent(value)}`);
-      if (!r.ok) throw new Error("GET failed");
-      const j = await r.json();
-      if (j.duplicate) {
-        showBanner(t.errors.duplicate, "error");
+      let j = null;
+      try {
+        j = await r.clone().json();
+      } catch {
+      }
+      if (r.status === 200 && j && typeof j.duplicate === "boolean") {
+        if (j.duplicate) {
+          showBanner(t.errors.duplicate, "error");
+          return;
+        }
+      } else if (r.status === 400) {
+        showBanner(t.errors.invalid, "error");
+        return;
+      } else {
+        showBanner(t.errors.submitError, "error");
         return;
       }
     } catch {
@@ -372,19 +383,27 @@ var T = [
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ email: value })
       });
-      const j = await r.json();
-      if (j.duplicate) {
-        showBanner(t.errors.duplicate, "error");
-        return;
+      let j = null;
+      try {
+        j = await r.clone().json();
+      } catch {
       }
-      if (j.ok) {
+      if (r.status === 200 && j?.ok) {
         successH2.textContent = t.success;
         successBack.textContent = t.back;
         banner.classList.remove("show");
         swapState("success");
-      } else {
-        showBanner(t.errors.submitError, "error");
+        return;
       }
+      if (r.status === 200 && j?.duplicate) {
+        showBanner(t.errors.duplicate, "error");
+        return;
+      }
+      if (r.status === 400) {
+        showBanner(t.errors.invalid, "error");
+        return;
+      }
+      showBanner(t.errors.submitError, "error");
     } catch {
       showBanner(t.errors.networkError, "error");
     }

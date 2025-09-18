@@ -1,5 +1,5 @@
 import type { Handler } from '@netlify/functions';
-import crypto from 'node:crypto'; // <— switch to node:crypto
+import crypto from 'node:crypto';
 
 const BUCKET = 'emails';
 
