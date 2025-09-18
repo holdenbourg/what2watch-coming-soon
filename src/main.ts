@@ -1,425 +1,471 @@
-type Dir = 'ltr' | 'rtl';
 type Align = 'center' | 'start' | 'right';
 
 type Translation = {
   code: string;
-  dir?: Dir;
   lang: string;
   heading: string;
   email: string;
   notify: string;
   errors: {
-    required: string;   // empty email
-    invalid: string;    // invalid email format
-    submitError: string; // server rejected or non-200
-    networkError: string; // fetch failed
+    required: string;
+    invalid: string;
+    submitError: string;
+    networkError: string;
+    duplicate: string;
   };
-  success: string;      // successful subscription
+  success: string;
+  back: string;
 };
 
 const T: Translation[] = [
-  { code:'en', dir:'ltr', lang:'English',
-    heading:'Be the first to know', email:'Email', notify:'Notify me',
+  { 
+    code:'en', 
+    lang:'English',
+    heading:'Be the first to know', 
+    email:'Email', 
+    notify:'Notify me',
     errors:{
       required:'Please enter your email',
       invalid:'Enter a valid email address',
       submitError:'Something went wrong. Please try again.',
-      networkError:'Network error. Please try again.'
+      networkError:'Network error. Please try again.',
+      duplicate:'That email has already been submitted'
     },
-    success:"Thanks! We'll notify you." },
-  { code:'es', dir:'ltr', lang:'Español',
-    heading:'Sé el primero en saberlo', email:'Correo electrónico', notify:'Avisarme',
+    success:`You've been added to the list, we'll email you when the site is live`, 
+    back:'Enter another email' 
+  },
+  { 
+    code:'es', 
+    lang:'Español',
+    heading:'Sé el primero en saberlo', 
+    email:'Correo electrónico', 
+    notify:'Avisarme',
     errors:{
       required:'Por favor ingresa tu correo',
       invalid:'Ingresa un correo válido',
       submitError:'Algo salió mal. Intenta de nuevo.',
-      networkError:'Error de red. Intenta de nuevo.'
+      networkError:'Error de red. Intenta de nuevo.',
+      duplicate:'Ese correo ya ha sido enviado'
     },
-    success:'¡Gracias! Te avisaremos.' },
-  { code:'fr', dir:'ltr', lang:'Français',
-    heading:'Soyez le premier informé', email:'Email', notify:'Prévenez-moi',
+    success:'Te hemos añadido a la lista; te enviaremos un correo cuando el sitio esté en línea.', 
+    back:'Ingresar otro correo' 
+  },
+  { 
+    code:'fr', 
+    lang:'Français',
+    heading:'Soyez le premier informé', 
+    email:'Email', 
+    notify:'Prévenez-moi',
     errors:{
-      required:"Veuillez saisir votre email",
+      required:'Veuillez saisir votre email',
       invalid:"Entrez une adresse email valide",
-      submitError:"Un problème est survenu. Réessayez.",
-      networkError:"Erreur réseau. Réessayez."
+      submitError:'Un problème est survenu. Réessayez.',
+      networkError:'Erreur réseau. Réessayez.',
+      duplicate:"Cet e-mail a déjà été soumis"
     },
-    success:"Merci ! Nous vous préviendrons." },
-  { code:'de', dir:'ltr', lang:'Deutsch',
-    heading:'Erfahre es als Erster', email:'Email', notify:'Benachrichtige mich',
+    success:'Vous avez été ajouté à la liste; nous vous enverrons un email lorsque le site sera en ligne.', 
+    back:'Saisir un autre e-mail' 
+  },
+  { 
+    code:'de', 
+    lang:'Deutsch',
+    heading:'Erfahre es als Erster', 
+    email:'Email', 
+    notify:'Benachrichtige mich',
     errors:{
       required:'Bitte email eingeben',
       invalid:'Gib eine gültige email ein',
       submitError:'Etwas ist schiefgelaufen. Bitte erneut versuchen.',
-      networkError:'Netzwerkfehler. Bitte erneut versuchen.'
+      networkError:'Netzwerkfehler. Bitte erneut versuchen.',
+      duplicate:'Diese E-Mail wurde bereits eingereicht'
     },
-    success:'Danke! Wir benachrichtigen dich.' },
-  { code:'pt', dir:'ltr', lang:'Português',
-    heading:'Seja o primeiro a saber', email:'Email', notify:'Avisar-me',
+    success:'Du wurdest zur Liste hinzugefügt; wir senden dir eine email, sobald die Website online ist.', 
+    back:'Weitere E-Mail eingeben' 
+  },
+  { 
+    code:'pt', 
+    lang:'Português',
+    heading:'Seja o primeiro a saber', 
+    email:'Email', 
+    notify:'Avisar-me',
     errors:{
       required:'Digite seu email',
       invalid:'Digite um email válido',
       submitError:'Algo deu errado. Tente novamente.',
-      networkError:'Erro de rede. Tente novamente.'
+      networkError:'Erro de rede. Tente novamente.',
+      duplicate:'Esse e-mail já foi cadastrado'
     },
-    success:'Obrigado! Avisaremos você.' },
-  { code:'it', dir:'ltr', lang:'Italiano',
-    heading:'Sii il primo a saperlo', email:'Email', notify:'Avvisami',
+    success:'Você foi adicionado à lista; enviaremos um email quando o site estiver no ar.', 
+    back:'Inserir outro e-mail' 
+  },
+  { 
+    code:'it', 
+    lang:'Italiano',
+    heading:'Sii il primo a saperlo', 
+    email:'Email', 
+    notify:'Avvisami',
     errors:{
       required:'Inserisci la tua email',
       invalid:'Inserisci un indirizzo email valido',
       submitError:'Qualcosa è andato storto. Riprova.',
-      networkError:'Errore di rete. Riprova.'
+      networkError:'Errore di rete. Riprova.',
+      duplicate:'Questa email è già stata inviata'
     },
-    success:'Grazie! Ti avviseremo.' },
-  { code:'ja', dir:'ltr', lang:'日本語',
-    heading:'最新情報をいち早く受け取る', email:'メール', notify:'通知を受け取る',
+    success:'Sei stato aggiunto alla lista; ti invieremo un’email quando il sito sarà online.', 
+    back:"Inserisci un'altra email" 
+  },
+  { 
+    code:'ja', 
+    lang:'日本語',
+    heading:'最新情報をいち早く受け取る', 
+    email:'メール', 
+    notify:'通知を受け取る',
     errors:{
       required:'メールアドレスを入力してください',
       invalid:'有効なメールアドレスを入力してください',
       submitError:'問題が発生しました。もう一度お試しください。',
-      networkError:'ネットワークエラーです。もう一度お試しください。'
+      networkError:'ネットワークエラーです。もう一度お試しください。',
+      duplicate:'そのメールアドレスは既に登録されています'
     },
-    success:'ありがとうございます。通知します。' },
-  { code:'ko', dir:'ltr', lang:'한국어',
-    heading:'가장 먼저 소식을 받아보세요', email:'이메일', notify:'알림 받기',
+    success:'リストに追加しました。サイトが公開されたらメールでお知らせします。', 
+    back:'別のメールを入力' 
+  },
+  { 
+    code:'ko', 
+    lang:'한국어',
+    heading:'가장 먼저 소식을 받아보세요', 
+    email:'이메일', 
+    notify:'알림 받기',
     errors:{
       required:'이메일을 입력하세요',
       invalid:'유효한 이메일을 입력하세요',
       submitError:'문제가 발생했습니다. 다시 시도하세요.',
-      networkError:'네트워크 오류입니다. 다시 시도하세요.'
+      networkError:'네트워크 오류입니다. 다시 시도하세요.',
+      duplicate:'이미 등록된 이메일입니다'
     },
-    success:'감사합니다! 알려드릴게요.' },
-  { code:'zh', dir:'ltr', lang:'中文',
-    heading:'第一时间获取消息', email:'邮箱', notify:'通知我',
+    success:'목록에 추가되었습니다. 사이트가 공개되면 이메일을 보내드릴게요.', 
+    back:'다른 이메일 입력' 
+  },
+  { 
+    code:'zh', 
+    lang:'中文',
+    heading:'第一时间获取消息', 
+    email:'邮箱', 
+    notify:'通知我',
     errors:{
       required:'请输入邮箱',
       invalid:'请输入有效的邮箱地址',
       submitError:'发生错误，请重试。',
-      networkError:'网络错误，请重试。'
+      networkError:'网络错误，请重试。',
+      duplicate:'该邮箱已提交过'
     },
-    success:'谢谢！我们会通知你。' },
-  { code:'ar', dir:'rtl', lang:'العربية',
-    heading:'كن أول من يعرف', email:'البريد الإلكتروني', notify:'أبلغني',
-    errors:{
-      required:'يرجى إدخال بريدك الإلكتروني',
-      invalid:'أدخل بريدًا إلكترونيًا صالحًا',
-      submitError:'حدث خطأ. يرجى المحاولة مرة أخرى.',
-      networkError:'خطأ في الشبكة. يرجى المحاولة مرة أخرى.'
-    },
-    success:'شكرًا لك! سنخطرك.' },
+    success:'你已加入名单，网站上线时我们会给你发送邮件。', 
+    back:'输入另一个邮箱' 
+  }
 ];
 
 (() => {
-  const FADE_MS = 600;
+  'use strict';
 
-  const htmlEl       = document.documentElement;
-  const formBox      = document.querySelector('.form-box') as HTMLElement;
-  const headingEl    = document.getElementById('i18n-heading')    as HTMLElement;
-  const emailLabel   = document.getElementById('i18n-email-label') as HTMLElement;
-  const submitButton = document.getElementById('i18n-submit')      as HTMLButtonElement;
-  const langChip     = document.getElementById('i18n-lang')        as HTMLElement;
-  const emailInput   = document.getElementById('email')            as HTMLInputElement | null;
-  const banner       = document.getElementById('banner')           as HTMLElement;
+  /// ----- True to bypass email validation (button transfers to success) ----- \\\
+  const DEV_BYPASS_VALIDATION = false;  
 
-  type Align = 'center' | 'start' | 'right';
-  const targets: Array<{el: HTMLElement; align: Align}> = [
-    { el: headingEl,    align: 'center' },
-    { el: emailLabel,   align: 'start'  },
-    { el: submitButton, align: 'center' },
-    { el: langChip,     align: 'right'  },
-  ];
+  /// ----- Transition Timing ----- \\\
+  const ROTATE_MS = 3000;
+  const FADE_MS = 900;
+  const BANNER_MS = 2300;
+  const HEIGHT_MS = 800;
+  const CONTENT_FADE_MS = 160;
+  const APPEAR_FRACTION = 0.60;
 
-  for (const t of targets) prepareLayers(t.el);
+  /// ----- Elements --- \\\
+  const panel = document.getElementById('panel') as HTMLElement;
+  const stateForm = document.getElementById('state-form') as HTMLElement;
+  const stateSuccess = document.getElementById('state-success') as HTMLElement;
+  const banner = document.getElementById('banner') as HTMLElement;
+  const emailEl = document.getElementById('email') as HTMLInputElement;
+  const formEl = document.getElementById('notify-form') as HTMLFormElement;
+  const backBtn = document.getElementById('i18n-back') as HTMLButtonElement;
+  const heading = document.getElementById('i18n-heading') as HTMLElement;
+  const emailLabel = document.getElementById('i18n-email-label') as HTMLElement;
+  const submitBtn = document.getElementById('i18n-submit') as HTMLElement;
+  const langChip  = document.getElementById('i18n-lang') as HTMLElement;
 
+  const ROTATE_TARGETS: HTMLElement[] = [heading, emailLabel, submitBtn, langChip].filter(Boolean) as HTMLElement[];
+
+  const successH2 = document.getElementById('i18n-success') as HTMLElement;
+  const successBack = document.getElementById('i18n-back') as HTMLElement;
+
+  /// ----- rotation state ----- \\\
   let idx = 0;
-  let timer: number | null = null;
+  let rotateTimer: number | null = null;
 
-  // We’ll use the banner for everything; track its semantic type and key
-  function setBanner(text: string, kind: 'success' | 'error') {
-    banner.textContent = text;
-    banner.classList.remove('success', 'error');
-    banner.classList.add('show', kind);
-    formBox.classList.add('has-banner');
+  prepareAllI18nTargets(document, ROTATE_TARGETS);
+  applyFormTexts(T[idx]);
+
+  startRotate();
+
+  document.querySelectorAll<HTMLElement>('.poster-rows .row .inner').forEach(el => {
+    const durStr = getComputedStyle(el).animationDuration;
+    const dur = parseFloat(durStr.split(',')[0]) || 140;
+
+    el.style.animationDelay = `${-(Math.random() * dur)}s`;
+  });
+
+  /// ----- rotation control ----- \\\
+  function startRotate() {
+    if (rotateTimer != null) return;
+
+    rotateTimer = window.setInterval(() => {
+      if (isInteractionActive()) return;
+
+      idx = (idx + 1) % T.length;
+      crossFadeAll(T[idx]);
+    }, ROTATE_MS);
   }
-function hideBanner() {
-  // if already hidden, nothing to do
-  if (!banner.classList.contains('show')) return;
+  function stopRotate() {
+    if (rotateTimer == null) return;
 
-  // remember the active color class so it stays during fade-out
-  const activeKind: 'success' | 'error' | null =
-    banner.classList.contains('error') ? 'error' :
-    banner.classList.contains('success') ? 'success' :
-    null;
-
-  // start fade-out (only remove .show)
-  banner.classList.remove('show');
-
-  // after the opacity transition completes, then clean up
-  const onDone = () => {
-    if (activeKind) banner.classList.remove(activeKind);
-    banner.textContent = '';
-    formBox.classList.remove('has-banner');
-    banner.removeEventListener('transitionend', onDone);
-  };
-
-  // prefer transitionend, but add a timeout fallback (keep in sync with CSS: .4s)
-  banner.addEventListener('transitionend', onDone);
-  window.setTimeout(onDone, 450);
-}
-  // Keep enough info to re-translate the banner when language changes
-  type BannerKey = 'required' | 'invalid' | 'submitError' | 'networkError' | 'success';
-  function rememberBanner(kind: 'success' | 'error', key: BannerKey | null) {
-    if (key) {
-      banner.dataset.kind = kind;
-      banner.dataset.key  = key;
-    } else {
-      delete banner.dataset.kind;
-      delete banner.dataset.key;
-    }
+    clearInterval(rotateTimer);
+    rotateTimer = null;
   }
-  function translateBannerFor(t: Translation) {
-    const kind = banner.dataset.kind as ('success' | 'error' | undefined);
-    const key  = banner.dataset.key as BannerKey | undefined;
-    if (!kind || !key) return;
-    const text =
-      key === 'success'      ? t.success :
-      key === 'required'     ? t.errors.required :
-      key === 'invalid'      ? t.errors.invalid :
-      key === 'submitError'  ? t.errors.submitError :
-      key === 'networkError' ? t.errors.networkError : '';
-    if (text) setBanner(text, kind);
+
+  function isInteractionActive(): boolean {
+    return document.activeElement === emailEl || (emailEl.value.trim().length > 0);
   }
+
+  emailEl.addEventListener('focus', stopRotate);
+  emailEl.addEventListener('blur', () => { if (!isInteractionActive()) startRotate(); });
+  emailEl.addEventListener('input', () => { if (isInteractionActive()) stopRotate(); else startRotate(); });
 
   function prepareLayers(el: HTMLElement): void {
     if (el.querySelector('.i18n-wrap')) return;
-    const wrap = document.createElement('span');
-    wrap.className = 'i18n-wrap';
 
-    const current = document.createElement('span');
-    current.className = 'i18n-layer is-current';
-    current.textContent = el.textContent ?? '';
+    const wrap = document.createElement('span'); wrap.className = 'i18n-wrap';
+    const cur  = document.createElement('span'); cur.className  = 'i18n-layer is-current';
 
-    const next = document.createElement('span');
-    next.className = 'i18n-layer';
+    cur.textContent = el.textContent ?? '';
+
+    const next = document.createElement('span'); next.className = 'i18n-layer';
 
     el.textContent = '';
-    el.appendChild(wrap);
-    wrap.appendChild(current);
-    wrap.appendChild(next);
+    el.appendChild(wrap); wrap.appendChild(cur); wrap.appendChild(next);
   }
 
-  function setAlign(layer: HTMLElement, dir: Dir, align: Align): void {
-    if (align === 'center') layer.style.textAlign = 'center';
-    else if (align === 'right') layer.style.textAlign = 'right';
-    else layer.style.textAlign = (dir === 'rtl' ? 'right' : 'left');
+  function prepareAllI18nTargets(scope: ParentNode, only: HTMLElement[]) {
+    only.forEach(prepareLayers);
   }
 
-  // ---------- line counting & per-layer shift for H2 ----------
-  function lineHeightPx(el: HTMLElement): number {
-    const cs = getComputedStyle(el);
-    const lh = cs.lineHeight;
-    if (lh.endsWith('px')) return parseFloat(lh);
-    const fs = parseFloat(cs.fontSize || '16');
-    return fs * 1.2;
-  }
-  function countLines(container: HTMLElement, layer: HTMLElement): number {
-    const lh = lineHeightPx(container);
-    return Math.max(1, Math.round(layer.scrollHeight / lh));
-  }
-  function computeShiftPx(container: HTMLElement, layer: HTMLElement): number {
-    const n = countLines(container, layer);
-    const lh = lineHeightPx(container);
-    return -(Math.max(0, n - 1)) * lh;  // negative = move up
-  }
-  function applyLayerShift(container: HTMLElement, layer: HTMLElement): void {
-    layer.style.transform = `translateY(${computeShiftPx(container, layer)}px)`;
-  }
+  function crossFade(el: HTMLElement, text: string, align: Align='center') {
+    const cur  = el.querySelector('.i18n-layer.is-current') as HTMLElement | null;
+    const next = el.querySelector('.i18n-layer:not(.is-current)') as HTMLElement | null;
+    if (!cur || !next) return;
 
-  function crossFade(el: HTMLElement, text: string, dir: Dir, align: Align): void {
-    const current = el.querySelector('.i18n-layer.is-current') as HTMLElement;
-    const next    = el.querySelector('.i18n-layer:not(.is-current)') as HTMLElement;
+    const r = el.getBoundingClientRect();
+    (el.style as any).minWidth  = `${r.width}px`;
+    (el.style as any).minHeight = `${r.height}px`;
 
     next.textContent = text;
-    next.setAttribute('dir', dir);
-    setAlign(next, dir, align);
+    (next.style as any).textAlign = align === 'start' ? 'left' : align === 'right' ? 'right' : 'center';
 
-    if (el === headingEl) {
-      applyLayerShift(headingEl, current);
-      applyLayerShift(headingEl, next);
-    }
+    requestAnimationFrame(() => { next.classList.add('is-current'); cur.classList.remove('is-current'); });
+    window.setTimeout(() => { (el.style as any).minWidth = ''; (el.style as any).minHeight = ''; }, FADE_MS);
+  }
 
-    // lock size during fade to avoid blips
-    const rect = el.getBoundingClientRect();
-    el.style.minWidth  = `${rect.width}px`;
-    el.style.minHeight = `${rect.height}px`;
+  function applyFormTexts(t: Translation) {
+    const set = (id: string, val: string) => {
+      const el = document.getElementById(id);
+      if (!el) return;
 
-    requestAnimationFrame(() => {
-      next.classList.add('is-current');
-      current.classList.remove('is-current');
+      const layer = el.querySelector('.i18n-layer.is-current') as HTMLElement | null;
+      if (layer) layer.textContent = val;
+    };
+
+    set('i18n-heading', t.heading);
+    set('i18n-email-label', t.email);
+    set('i18n-submit', t.notify);
+
+    const langLayer = langChip?.querySelector('.i18n-layer.is-current') as HTMLElement | null;
+    if (langLayer) langLayer.textContent = t.lang;
+  }
+
+  function crossFadeAll(t: Translation) {
+    if (heading)    crossFade(heading, t.heading, 'center');
+    if (emailLabel) crossFade(emailLabel, t.email, 'start');
+    if (submitBtn)  crossFade(submitBtn, t.notify, 'center');
+    if (langChip)   crossFade(langChip, t.lang, 'right');
+  }
+
+  let bannerTimer: number | null = null;
+
+  function showBanner(msg: string, kind: 'error'|'success') {
+    banner.textContent = msg;
+    banner.classList.remove('error', 'success', 'show');
+
+    void banner.offsetHeight;
+    banner.classList.add(kind, 'show');
+
+    if (bannerTimer != null) clearTimeout(bannerTimer);
+    bannerTimer = window.setTimeout(() => { banner.classList.remove('show'); }, BANNER_MS);
+  }
+
+  function fadeChildren(el: HTMLElement, on: boolean, dur = FADE_MS) {
+    el.querySelectorAll<HTMLElement>(':scope > *').forEach(child => {
+      child.style.transition = `opacity ${dur}ms ease`;
+      child.style.opacity = on ? '1' : '0';
     });
-
-    window.setTimeout(() => {
-      el.setAttribute('dir', dir);
-      el.style.minWidth = '';
-      el.style.minHeight = '';
-      if (el === headingEl) {
-        const curNow = el.querySelector('.i18n-layer.is-current') as HTMLElement | null;
-        if (curNow) applyLayerShift(headingEl, curNow);
-      }
-    }, FADE_MS);
   }
 
-  function applyTexts(tl: Translation): void {
-    htmlEl.setAttribute('lang', tl.code);
-    const d: Dir = tl.dir ?? 'ltr';
+  function measureAutoPanelHeightWith(stateEl: HTMLElement): number {
+    const clone = panel.cloneNode(true) as HTMLElement;
+    clone.id = '';
+    clone.style.position = 'absolute';
+    clone.style.left = '-99999px';
+    clone.style.top = '0';
+    clone.style.height = 'auto';
+    clone.style.minHeight = '0';
+    clone.style.maxHeight = 'none';
+    clone.style.transition = 'none';
+    clone.style.willChange = 'auto';
 
-    // seed texts (no fade)
-    (headingEl.querySelector('.i18n-layer.is-current') as HTMLElement).textContent = tl.heading;
-    (emailLabel.querySelector('.i18n-layer.is-current') as HTMLElement).textContent = tl.email;
-    (submitButton.querySelector('.i18n-layer.is-current') as HTMLElement).textContent = tl.notify;
-    (langChip.querySelector('.i18n-layer.is-current') as HTMLElement).textContent = tl.lang;
+    const cForm    = clone.querySelector('#state-form') as HTMLElement;
+    const cSuccess = clone.querySelector('#state-success') as HTMLElement;
 
-    headingEl.setAttribute('dir', d);
-    emailLabel.setAttribute('dir', d);
-    submitButton.setAttribute('dir', d);
-    langChip.setAttribute('dir', d);
-
-    if (emailInput) {
-      emailInput.setAttribute('dir', d);
-      emailInput.style.textAlign = (d === 'rtl' ? 'right' : 'left');
+    if (stateEl.id === 'state-success') {
+      cForm.classList.remove('is-visible'); cForm.classList.add('is-hidden');
+      cSuccess.classList.remove('is-hidden'); cSuccess.classList.add('is-visible');
+    } else {
+      cSuccess.classList.remove('is-visible'); cSuccess.classList.add('is-hidden');
+      cForm.classList.remove('is-hidden'); cForm.classList.add('is-visible');
     }
 
-    // initial transform on the current heading layer
-    const cur = headingEl.querySelector('.i18n-layer.is-current') as HTMLElement | null;
-    if (cur) applyLayerShift(headingEl, cur);
+    document.body.appendChild(clone);
+    const targetH = Math.round(clone.getBoundingClientRect().height);
 
-    // if a banner is visible, translate its text
-    if (banner.classList.contains('show')) translateBannerFor(tl);
+    document.body.removeChild(clone);
+    return targetH;
   }
 
-  function crossFadeAll(tl: Translation): void {
-    htmlEl.setAttribute('lang', tl.code);
-    const d: Dir = tl.dir ?? 'ltr';
 
-    crossFade(headingEl,    tl.heading, d, 'center');
-    crossFade(emailLabel,   tl.email,   d, 'start');
-    crossFade(submitButton, tl.notify,  d, 'center');
-    crossFade(langChip,     tl.lang,    d, 'right');
+  function swapState(to: 'form' | 'success') {
+    const fromEl = to === 'form' ? stateSuccess : stateForm;
+    const toEl   = to === 'form' ? stateForm    : stateSuccess;
 
-    if (emailInput) {
-      emailInput.setAttribute('dir', d);
-      emailInput.style.textAlign = (d === 'rtl' ? 'right' : 'left');
-    }
+    const startH = panel.getBoundingClientRect().height;
 
-    // also keep banner translated during rotation
-    if (banner.classList.contains('show')) translateBannerFor(tl);
+    panel.style.height = `${startH}px`;
+    panel.style.transition = `height ${HEIGHT_MS}ms cubic-bezier(0.22,1,0.36,1)`;
+
+    fadeChildren(fromEl, false, CONTENT_FADE_MS);
+
+    fromEl.classList.remove('is-visible'); 
+    fromEl.classList.add('is-hidden');
+
+    toEl.classList.remove('is-hidden');    
+    toEl.classList.add('is-visible');
+
+    fromEl.setAttribute('aria-hidden', 'true');
+    toEl.setAttribute('aria-hidden', 'false');
+
+    fadeChildren(toEl, false, 0);
+
+    const targetH = measureAutoPanelHeightWith(toEl);
+
+    requestAnimationFrame(() => { panel.style.height = `${targetH}px`; });
+
+    const appearDelay = Math.max(0, Math.floor(HEIGHT_MS * APPEAR_FRACTION) - CONTENT_FADE_MS);
+    setTimeout(() => { fadeChildren(toEl, true, CONTENT_FADE_MS); }, appearDelay);
+
+    const finish = () => {
+      panel.removeEventListener('transitionend', finish);
+      const finalH = panel.getBoundingClientRect().height;
+
+      panel.style.transition = '';
+      panel.style.height = `${finalH}px`;
+
+      requestAnimationFrame(() => { panel.style.height = ''; });
+    };
+
+    panel.addEventListener('transitionend', finish);
+    setTimeout(finish, HEIGHT_MS + 120);
   }
 
-  // rotation
-  applyTexts(T[idx]);
-  timer = window.setInterval(() => {
-    idx = (idx + 1) % T.length;
-    crossFadeAll(T[idx]);
-  }, 3000);
 
-  // keep transforms accurate on resize/font ready
-  (document as any).fonts?.ready?.then?.(() => {
-    const cur = headingEl.querySelector('.i18n-layer.is-current') as HTMLElement | null;
-    if (cur) applyLayerShift(headingEl, cur);
-  });
-  window.addEventListener('resize', () => {
-    const cur = headingEl.querySelector('.i18n-layer.is-current') as HTMLElement | null;
-    if (cur) applyLayerShift(headingEl, cur);
-  });
-
-  // pause/resume while typing or when banner visible
-  const isBusy = (): boolean =>
-    !!emailInput?.matches(':focus') ||
-    !!emailInput?.value.trim() ||
-    banner.classList.contains('show');
-
-  function start(): void {
-    if (timer == null) {
-      timer = window.setInterval(() => {
-        idx = (idx + 1) % T.length;
-        crossFadeAll(T[idx]);
-      }, 3000);
-    }
-  }
-  function stop(): void {
-    if (timer != null) { window.clearInterval(timer); timer = null; }
-  }
-
-  emailInput?.addEventListener('focus', stop, { passive: true });
-  emailInput?.addEventListener('blur', () => { if (!isBusy()) start(); }, { passive: true });
-  emailInput?.addEventListener('input', () => { if (isBusy()) stop(); else start(); }, { passive: true });
-
-  // Validation + submission: use BANNER ONLY (translated)
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
-
-  function validateEmail(): boolean {
-    const tl = T[idx];
-    const value = (emailInput?.value || '').trim();
-    if (!value) {
-      setBanner(tl.errors.required, 'error');
-      rememberBanner('error', 'required');
-      return false;
-    }
-    if (!emailRegex.test(value)) {
-      setBanner(tl.errors.invalid, 'error');
-      rememberBanner('error', 'invalid');
-      return false;
-    }
-    return true;
-  }
-
-  const form = document.getElementById('notify-form') as HTMLFormElement | null;
-
-  function encode(data: Record<string, string>): string {
-    return Object.keys(data).map(k => encodeURIComponent(k) + '=' + encodeURIComponent(data[k])).join('&');
-  }
-
-  form?.addEventListener('submit', async (e: SubmitEvent) => {
+  /// ---------------------------------------- Submit/Back Logic ---------------------------------------- \\\
+  formEl.addEventListener('submit', async (e) => {
     e.preventDefault();
 
-    // show validation errors in banner
-    if (!validateEmail()) {
-      // auto-clear banner after 3s so rotation can resume if desired
-      setTimeout(() => { if (banner.classList.contains('show')) { hideBanner(); if (!isBusy()) start(); } }, 3000);
-      stop(); // pause rotation while visible
+    const t = T[idx];
+    stopRotate();
+
+    const value = emailEl.value.trim().toLowerCase();
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
+
+    if (!DEV_BYPASS_VALIDATION) {
+      if (!value) { 
+        showBanner(t.errors.required, 'error'); 
+        emailEl.focus(); return; 
+      }
+      if (!re.test(value)) { 
+        showBanner(t.errors.invalid, 'error'); 
+        emailEl.focus(); return; 
+      }
+    }
+
+    ///  1) Optional quick GET for fast feedback  \\\
+    try {
+      const r = await fetch(`/.netlify/functions/subscribe?email=${encodeURIComponent(value)}`);
+      if (!r.ok) throw new Error('GET failed');
+
+      const j = await r.json();
+      if (j.duplicate) {
+        showBanner(t.errors.duplicate, 'error');
+        return; ///  don’t POST if already there  \\\
+      }
+
+    } catch {
+      showBanner(t.errors.networkError, 'error');
       return;
     }
 
-    // Try submit
-    stop();
-    const tl = T[idx];
-
+    ///  2) POST (atomic server-side check + insert)  \\\
     try {
-      const formName = 'notify';
-      const email = emailInput?.value.trim() ?? '';
-      const body = encode({ 'form-name': formName, email });
-
-      const res = await fetch('/', {
+      const r = await fetch('/.netlify/functions/subscribe', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ email: value }),
       });
 
-      if (res.ok) {
-        form?.reset();
-        setBanner(tl.success, 'success');
-        rememberBanner('success', 'success');
-      } else {
-        setBanner(tl.errors.submitError, 'error');
-        rememberBanner('error', 'submitError');
-      }
-    } catch {
-      setBanner(tl.errors.networkError, 'error');
-      rememberBanner('error', 'networkError');
-    }
+      ///  If your function returns { ok:boolean, duplicate?:boolean }  \\\
+      const j = await r.json();
 
-    // auto-hide banner after 3s and resume rotation
-    setTimeout(() => { hideBanner(); if (!isBusy()) start(); }, 3000);
+      if (j.duplicate) {
+        showBanner(t.errors.duplicate, 'error');
+        return;
+      }
+
+      if (j.ok) {
+        successH2.textContent = t.success;
+        successBack.textContent = t.back;
+        banner.classList.remove('show');
+
+        swapState('success');
+      } else {
+        showBanner(t.errors.submitError, 'error');
+      }
+
+    } catch {
+      showBanner(t.errors.networkError, 'error');
+    }
+  });
+
+  backBtn.addEventListener('click', () => {
+    emailEl.value = '';
+    banner.classList.remove('show');
+
+    swapState('form');
+    startRotate();
+    applyFormTexts(T[idx]);
+    setTimeout(() => emailEl.focus(), FADE_MS);
   });
 })();

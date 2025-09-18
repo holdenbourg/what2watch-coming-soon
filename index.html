@@ -3,6 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
+
     <title>What2Watch — Coming Soon</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -12,10 +13,9 @@
       as="style"
       href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap"
       onload="this.onload=null;this.rel='stylesheet'">
+
     <noscript>
-      <link
-        rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap">
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap">
     </noscript>
 
     <link rel="stylesheet" href="styles.css" />
@@ -33,42 +33,53 @@
   </head>
 
   <body>
-    <main class="wrapper">
-      <div class="form-box">
+    <div class="poster-rows" aria-hidden="true">
+      <div class="row r1"><div class="inner"></div></div>
+      <div class="row r2"><div class="inner"></div></div>
+      <div class="row r3"><div class="inner"></div></div>
+      <div class="row r4"><div class="inner"></div></div>
+      <div class="row r5"><div class="inner"></div></div>
+      <div class="row r6"><div class="inner"></div></div>
+      <div class="row r7"><div class="inner"></div></div>
+      <div class="row r8"><div class="inner"></div></div>
+      <div class="row r9"><div class="inner"></div></div>
+      <div class="row r10"><div class="inner"></div></div>
+    </div>
 
-        <!-- Fixed floor box (1 line). Text sits on the bottom of this box. -->
-        <div class="title-floor">
-          <h2 id="i18n-heading" class="form-title i18n-target">Be the first to know</h2>
+    <main class="wrapper" id="panel">
+      <div class="form-box">
+        <div class="state state-form is-visible" id="state-form" aria-hidden="false">
+          <div class="title-floor">
+            <h2 id="i18n-heading" class="form-title i18n-target">Be the first to know</h2>
+          </div>
+
+          <div id="banner" class="warning-banner" role="status" aria-live="polite"></div>
+
+          <form id="notify-form" method="POST" novalidate>
+            <div class="input-box">
+              <input id="email" type="email" name="email" required autocomplete="email" placeholder=" " aria-label="Email"/>
+
+              <label id="i18n-email-label" class="i18n-target">Email</label>
+            </div>
+
+            <button type="submit" class="button i18n-target" id="i18n-submit">Notify me</button>
+
+            <div class="lang-chip" aria-hidden="true">
+              <span id="i18n-lang" class="i18n-target">English</span>
+            </div>
+          </form>
         </div>
 
-        <div id="banner" class="warning-banner" role="status" aria-live="polite"></div>
-
-        <form id="notify-form" action="/success.html" method="POST" novalidate>
-          <div class="input-box">
-            <input
-              id="email"
-              type="email"
-              name="email"
-              required
-              autocomplete="email"
-              placeholder=" "
-              aria-label="Email"
-            />
-            <label id="i18n-email-label" class="i18n-target">Email</label>
+        <div class="state state-success is-hidden" id="state-success" aria-hidden="true">
+          <div class="success-box">
+            <h2 id="i18n-success">Thanks! We’ll notify you.</h2>
+            
+            <button type="button" class="button" id="i18n-back">Enter another email</button>
           </div>
-
-          <button type="submit" class="button i18n-target" id="i18n-submit">
-            Notify me
-          </button>
-
-          <div class="lang-chip" aria-hidden="true">
-            <span id="i18n-lang" class="i18n-target">English</span>
-          </div>
-        </form>
+        </div>
       </div>
     </main>
 
-    <!-- esbuild should compile src/main.ts -> assets/main.js -->
     <script type="module" src="assets/main.js"></script>
   </body>
 </html>
