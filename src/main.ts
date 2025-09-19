@@ -205,7 +205,6 @@ const T: Translation[] = [
     el.style.animationDelay = `${-(Math.random() * dur)}s`;
   });
 
-  
   /// ----- rotation state ----- \\\
   let idx = 0;
   let rotateTimer: number | null = null;
