@@ -196,6 +196,16 @@ const T: Translation[] = [
   const successH2 = document.getElementById('i18n-success') as HTMLElement;
   const successBack = document.getElementById('i18n-back') as HTMLElement;
 
+  
+  /// ----- Add random start point for each row ----- \\\
+  document.querySelectorAll<HTMLElement>('.poster-rows .row .inner').forEach(el => {
+    const durStr = getComputedStyle(el).animationDuration;
+    const dur = parseFloat(durStr.split(',')[0]) || 140;
+
+    el.style.animationDelay = `${-(Math.random() * dur)}s`;
+  });
+
+  
   /// ----- rotation state ----- \\\
   let idx = 0;
   let rotateTimer: number | null = null;
@@ -204,13 +214,6 @@ const T: Translation[] = [
   applyFormTexts(T[idx]);
 
   startRotate();
-
-  document.querySelectorAll<HTMLElement>('.poster-rows .row .inner').forEach(el => {
-    const durStr = getComputedStyle(el).animationDuration;
-    const dur = parseFloat(durStr.split(',')[0]) || 140;
-
-    el.style.animationDelay = `${-(Math.random() * dur)}s`;
-  });
 
   /// ----- rotation control ----- \\\
   function startRotate() {
