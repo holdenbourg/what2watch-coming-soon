@@ -90,16 +90,16 @@ body::after{
   } 
 }
 
-.poster-rows .r1  .inner { background-image: url('/assets/images/row1.png'),  url('/assets/images/row1.png');  animation: marquee-right 194s linear infinite; }
-.poster-rows .r2  .inner { background-image: url('/assets/images/row2.png'),  url('/assets/images/row2.png');  animation: marquee-right 134s linear infinite; }
-.poster-rows .r3  .inner { background-image: url('/assets/images/row3.png'),  url('/assets/images/row3.png');  animation: marquee-right 189s linear infinite; }
-.poster-rows .r4  .inner { background-image: url('/assets/images/row4.png'),  url('/assets/images/row4.png');  animation: marquee-right 128s linear infinite; }
-.poster-rows .r5  .inner { background-image: url('/assets/images/row5.png'),  url('/assets/images/row5.png');  animation: marquee-right 143s linear infinite; }
-.poster-rows .r6  .inner { background-image: url('/assets/images/row6.png'),  url('/assets/images/row6.png');  animation: marquee-right 165s linear infinite; }
-.poster-rows .r7  .inner { background-image: url('/assets/images/row7.png'),  url('/assets/images/row7.png');  animation: marquee-right 181s linear infinite; }
-.poster-rows .r8  .inner { background-image: url('/assets/images/row8.png'),  url('/assets/images/row8.png');  animation: marquee-right 189s linear infinite; }
-.poster-rows .r9  .inner { background-image: url('/assets/images/row9.png'),  url('/assets/images/row9.png');  animation: marquee-right 125s linear infinite; }
-.poster-rows .r10 .inner { background-image: url('/assets/images/row10.png'), url('/assets/images/row10.png'); animation: marquee-right 137s linear infinite; }
+.poster-rows .r1  .inner { background-image: url('/assets/images/background-rows/row1.png'),  url('/assets/images/background-rows/row1.png');  animation: marquee-right 194s linear infinite; }
+.poster-rows .r2  .inner { background-image: url('/assets/images/background-rows/row2.png'),  url('/assets/images/background-rows/row2.png');  animation: marquee-right 134s linear infinite; }
+.poster-rows .r3  .inner { background-image: url('/assets/images/background-rows/row3.png'),  url('/assets/images/background-rows/row3.png');  animation: marquee-right 189s linear infinite; }
+.poster-rows .r4  .inner { background-image: url('/assets/images/background-rows/row4.png'),  url('/assets/images/background-rows/row4.png');  animation: marquee-right 128s linear infinite; }
+.poster-rows .r5  .inner { background-image: url('/assets/images/background-rows/row5.png'),  url('/assets/images/background-rows/row5.png');  animation: marquee-right 143s linear infinite; }
+.poster-rows .r6  .inner { background-image: url('/assets/images/background-rows/row6.png'),  url('/assets/images/background-rows/row6.png');  animation: marquee-right 165s linear infinite; }
+.poster-rows .r7  .inner { background-image: url('/assets/images/background-rows/row7.png'),  url('/assets/images/background-rows/row7.png');  animation: marquee-right 181s linear infinite; }
+.poster-rows .r8  .inner { background-image: url('/assets/images/background-rows/row8.png'),  url('/assets/images/background-rows/row8.png');  animation: marquee-right 189s linear infinite; }
+.poster-rows .r9  .inner { background-image: url('/assets/images/background-rows/row9.png'),  url('/assets/images/background-rows/row9.png');  animation: marquee-right 125s linear infinite; }
+.poster-rows .r10 .inner { background-image: url('/assets/images/background-rows/row10.png'), url('/assets/images/background-rows/row10.png'); animation: marquee-right 137s linear infinite; }
 
 @media (prefers-reduced-motion: reduce) { 
   .poster-rows .row .inner { 
